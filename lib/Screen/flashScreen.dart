@@ -13,10 +13,10 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => Loginscreen()),
+        MaterialPageRoute(builder: (context) => const Loginscreen()),
       );
     });
   }
@@ -38,14 +38,14 @@ class _SplashScreenState extends State<SplashScreen> {
                 colorBlendMode: BlendMode.multiply,
               ),
 
-              Text(
+              const Text(
                 'Fitness App',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              Text(
+              const Text(
                 'This is the best fitness app for your health',
                 style: TextStyle(
                   fontSize: 20,

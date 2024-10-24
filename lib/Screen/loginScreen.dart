@@ -1,5 +1,10 @@
+import 'dart:convert';
+
+import 'package:fitness/Screen/dashboardScreen.dart';
 import 'package:fitness/Screen/registerScreen.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:toast/toast.dart';
 
 class Loginscreen extends StatefulWidget {
   const Loginscreen({super.key});
@@ -17,12 +22,42 @@ class _LoginscreenState extends State<Loginscreen> {
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
 
+  Future<void> login(email, password) async {
+    const url = "http://10.0.2.2/fitness/login.php";
+
+    try {
+      final response = await http.post(Uri.parse(url),body: {
+        'email': email,
+        'password': password,
+      });
+
+      final responseData = json.decode(response.body);
+
+      if (responseData["success"]) {
+        final String name = responseData["name"];
+        final String email = responseData["email"];
+
+        Navigator.push(context, MaterialPageRoute(builder: (context) => DashboardScreen(name:name, email:email)));
+      } else {
+        final String errorMessage = responseData["message"];
+        Toast.show(errorMessage,
+            duration: Toast.lengthShort, gravity: Toast.top);
+
+      }
+
+    } catch (e) {
+      Toast.show("An error occurred, please try again later!",
+          duration: Toast.lengthShort, gravity: Toast.top);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    ToastContext().init(context);
     return Scaffold(
         backgroundColor: Colors.grey,
         appBar: AppBar(
-          title: Text("Login"),
+          title: const Text("Login"),
           backgroundColor: Colors.grey,
         ),
         body: SingleChildScrollView(
@@ -79,9 +114,10 @@ class _LoginscreenState extends State<Loginscreen> {
                       controller: password,
                       decoration: InputDecoration(
                         labelText: 'Password',
-                        contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
+                        contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 20.0),
                         border: InputBorder.none,
-                        prefixIcon: Icon(Icons.lock),
+                        prefixIcon: const Icon(Icons.lock),
                         suffixIcon: IconButton(
                           icon: Icon(
                             _passwordVisible
@@ -116,6 +152,7 @@ class _LoginscreenState extends State<Loginscreen> {
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
                       }
+                      login(_email, _password);
                     },
                     child: const Text(
                       "Login",
@@ -130,7 +167,7 @@ class _LoginscreenState extends State<Loginscreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => Registerscreen()),
+                              builder: (context) => const Registerscreen()),
                         );
                       },
                       child: const Text(

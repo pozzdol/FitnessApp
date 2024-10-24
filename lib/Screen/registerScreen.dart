@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'package:fitness/Screen/loginScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:toast/toast.dart';
 
 class Registerscreen extends StatefulWidget {
   const Registerscreen({super.key});
@@ -13,16 +17,43 @@ class _RegisterscreenState extends State<Registerscreen> {
 
   bool _passwordVisible = false;
 
-  TextEditingController nameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  TextEditingController name = TextEditingController();
+  TextEditingController email = TextEditingController();
+  TextEditingController password = TextEditingController();
+
+  Future<void> insert_record() async {
+    try {
+      String uri = "http://10.0.2.2/fitness/register.php";
+      var res = await http.post(Uri.parse(uri), body: {
+        "name": name.text,
+        "email": email.text,
+        "password": password.text,
+      });
+
+      final responseData = json.decode(res.body);
+
+      if (responseData['success']) {
+        print("Registered Successfully!");
+        Toast.show("Registered Successfully!",
+            duration: Toast.lengthShort, gravity: Toast.top);
+
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => const Loginscreen()));
+      } else {
+        print("Not Registered!");
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    ToastContext().init(context);
     return Scaffold(
         backgroundColor: Colors.grey,
         appBar: AppBar(
-          title: Text("Register"),
+          title: const Text("Register"),
           backgroundColor: Colors.grey,
         ),
         body: SingleChildScrollView(
@@ -36,7 +67,6 @@ class _RegisterscreenState extends State<Registerscreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-
                   Image.asset(
                     'assets/img/logo.png',
                     height: 150,
@@ -51,7 +81,7 @@ class _RegisterscreenState extends State<Registerscreen> {
                         borderRadius: BorderRadius.circular(10.0),
                         color: Colors.grey[200]),
                     child: TextFormField(
-                      controller: nameController,
+                      controller: name,
                       decoration: const InputDecoration(
                         labelText: 'Name',
                         contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
@@ -77,7 +107,7 @@ class _RegisterscreenState extends State<Registerscreen> {
                         borderRadius: BorderRadius.circular(10.0),
                         color: Colors.grey[200]),
                     child: TextFormField(
-                      controller: emailController,
+                      controller: email,
                       decoration: const InputDecoration(
                         labelText: 'Email',
                         contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
@@ -105,12 +135,13 @@ class _RegisterscreenState extends State<Registerscreen> {
                         borderRadius: BorderRadius.circular(10.0),
                         color: Colors.grey[200]),
                     child: TextFormField(
-                      controller: passwordController,
+                      controller: password,
                       decoration: InputDecoration(
                         labelText: 'Password',
-                        contentPadding: EdgeInsets.symmetric(horizontal: 20.0),
+                        contentPadding:
+                            const EdgeInsets.symmetric(horizontal: 20.0),
                         border: InputBorder.none,
-                        prefixIcon: Icon(Icons.lock),
+                        prefixIcon: const Icon(Icons.lock),
                         suffixIcon: IconButton(
                           icon: Icon(
                             _passwordVisible
@@ -146,8 +177,11 @@ class _RegisterscreenState extends State<Registerscreen> {
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
                         // You can handle the registration logic here
-                        print('Name: $_name, Email: $_email, Password: $_password');
+                        print(
+                            'Name: $_name, Email: $_email, Password: $_password');
                       }
+
+                      insert_record();
                     },
                     child: const Text(
                       "Register",

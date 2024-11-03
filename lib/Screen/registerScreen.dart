@@ -14,7 +14,6 @@ class Registerscreen extends StatefulWidget {
 class _RegisterscreenState extends State<Registerscreen> {
   final _formKey = GlobalKey<FormState>();
   String _name = '', _email = '', _password = '';
-
   bool _passwordVisible = false;
 
   TextEditingController name = TextEditingController();
@@ -31,21 +30,23 @@ class _RegisterscreenState extends State<Registerscreen> {
       });
 
       final responseData = json.decode(res.body);
+      print(responseData);  // Debugging: Tampilkan seluruh respons
 
-      if (responseData['success']) {
+      // Memperbaiki pengecekan
+      if (responseData['success'] == 'true' ) {
         print("Registered Successfully!");
         Toast.show("Registered Successfully!",
             duration: Toast.lengthShort, gravity: Toast.top);
-
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => const Loginscreen()));
-      } else {
-        print("Not Registered!");
+      } else if (responseData['success'] == 'false' ) {
+        print("Not Registered Succes!");
       }
     } catch (e) {
       print(e);
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -179,6 +180,7 @@ class _RegisterscreenState extends State<Registerscreen> {
                         // You can handle the registration logic here
                         print(
                             'Name: $_name, Email: $_email, Password: $_password');
+
                       }
 
                       insert_record();

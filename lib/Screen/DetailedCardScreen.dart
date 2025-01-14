@@ -43,14 +43,14 @@ class _DetailedCardscreenState extends State<DetailedCardscreen> {
 
     const oneSec = Duration(seconds: 1);
     Timer.periodic(oneSec, (timer) {
-      if (_secondRemaining == 0){
+      if (_secondRemaining == 0) {
         setState(() {
           _isCounting = false;
           _excerciseCompleted = true;
         });
-      } else{
+      } else {
         setState(() {
-          _secondRemaining --;
+          _secondRemaining--;
         });
       }
     });
@@ -123,13 +123,9 @@ class _DetailedCardscreenState extends State<DetailedCardscreen> {
                         height: 16.0,
                       ),
                 _excerciseCompleted
-                    ? Column(
+                    ? const Column(
                         children: [
-                          ElevatedButton(
-                            onPressed: () {},
-                            child: const Text('Reset'),
-                          ),
-                          const SizedBox(
+                          SizedBox(
                             height: 20.0,
                           ),
                           Text(
@@ -142,7 +138,9 @@ class _DetailedCardscreenState extends State<DetailedCardscreen> {
                         onPressed: () {
                           _startCounting();
                         },
-                        child: const Text('Start Counting'),
+                        child: Text(_isCounting
+                            ? 'Counting Down...'
+                            : 'Start Counting'),
                       )
               ],
             ),
